@@ -1,7 +1,6 @@
 #include <iostream>
-#include "vector.h"
 
 int main() {
-  std::cout << "Hello world!\n" << ministl::vector(5);
+  std::cout << "Hello world!\n";
   return 0;
 }
