@@ -46,6 +46,37 @@ class vector {
     cap_ = newcap;
   }
 
+  void push_back(const T& value) {
+    if (sz_ == cap_) {
+      size_t newcap = sz_ > 0 ? sz_ * 2 : 1;
+      T* newptr = reinterpret_cast<T*>(new char[sizeof(T) * newcap]);
+
+      size_t index = 0;
+      try {
+        for (; index < sz_; ++index) {
+          new(newptr + index) T(ptr_[index]);
+        }
+        new(newptr + index) T(value);
+      } catch (...) {
+        for (size_t newindex = 0; newindex < index; ++newindex) {
+          (newptr + newindex)->~T();
+        }
+        delete[] reinterpret_cast<char*>(newptr);
+        throw;
+      }
+
+      for (size_t index = 0; index < sz_; ++index) {
+        (ptr_ + index)->~T();
+      }
+
+      delete[] reinterpret_cast<char*>(ptr_);
+      ptr_ = newptr;
+      cap_ = newcap;
+    } else {
+      new(ptr_ + sz_) T(value);
+    }
+      ++sz_;
+  }
 
   ~vector() {
     for (size_t index = 0; index < sz_; ++index) {
