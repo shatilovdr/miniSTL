@@ -12,6 +12,10 @@ class vector {
   size_t size() const {
     return sz_;
   }
+  
+  size_t capacity() const {
+    return cap_;
+  }
 
   ~vector() {}
 
