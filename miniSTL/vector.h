@@ -78,6 +78,11 @@ class vector {
       ++sz_;
   }
 
+  void pop_back() {
+    (ptr_ + sz_ - 1)->~T();
+    --sz_;
+  }
+
   ~vector() {
     for (size_t index = 0; index < sz_; ++index) {
       (ptr_ + index)->~T();
