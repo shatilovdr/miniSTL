@@ -21,14 +21,27 @@ class vector {
     if (newcap <= cap_) {
       return;
     }
+
     T* newptr = reinterpret_cast<T*>(new char[sizeof(T) * newcap]);
-    for (size_t index = 0; index < sz_; ++index) {
-      new(newptr + index) T(ptr_[index]);
+
+    size_t index = 0;
+    try {
+      for (; index < sz_; ++index) {
+        new(newptr + index) T(ptr_[index]);
+      }
+    } catch (...) {
+      for (size_t newindex = 0; newindex < index; ++newindex) {
+        (newptr + newindex)->~T();
+      }
+      delete[] reinterpret_cast<char*>(newptr);
+      throw;
     }
+
     for (size_t index = 0; index < sz_; ++index) {
       (ptr_ + index)->~T();
     }
-    delete[] ptr_;
+
+    delete[] reinterpret_cast<char*>(ptr_);
     ptr_ = newptr;
     cap_ = newcap;
   }
