@@ -12,12 +12,34 @@ class vector {
   size_t size() const {
     return sz_;
   }
-  
+
   size_t capacity() const {
     return cap_;
   }
 
-  ~vector() {}
+  void reserve(size_t newcap) {
+    if (newcap <= cap_) {
+      return;
+    }
+    T* newptr = reinterpret_cast<T*>(new char[sizeof(T) * newcap]);
+    for (size_t index = 0; index < sz_; ++index) {
+      new(newptr + index) T(ptr_[index]);
+    }
+    for (size_t index = 0; index < sz_; ++index) {
+      (ptr_ + index)->~T();
+    }
+    delete[] ptr_;
+    ptr_ = newptr;
+    cap_ = newcap;
+  }
+
+
+  ~vector() {
+    for (size_t index = 0; index < sz_; ++index) {
+      (ptr_ + index)->~T();
+    }
+    delete[] ptr_;
+  }
 
  private:
   T*      ptr_;
