@@ -10,8 +10,9 @@ class vector {
   explicit vector(size_t count, const T& value = T())
       : ptr_(nullptr), sz_(count), cap_(count) {
 
-    if (cap_ == 0)
+    if (cap_ == 0) {
       return;
+    }
 
     ptr_ = reinterpret_cast<T*>(new char[sizeof(T) * cap_]);
 
@@ -51,7 +52,41 @@ class vector {
     }
   };
 
-  vector& operator=(const vector& other);
+  vector& operator=(const vector& other) {
+    if (this == &other) {
+      return *this;
+    }
+    
+    T* newptr = nullptr;
+    if (other.cap_ > 0) {
+      newptr = reinterpret_cast<T*>(new char[sizeof(T) * other.cap_]);
+    }
+
+    size_t index = 0;
+    try {
+      for (; index < other.sz_; ++index) {
+        new(newptr + index) T(other.ptr_[index]);
+      }
+    } catch (...) {
+      for (size_t newindex = 0; newindex < index; ++newindex) {
+        (newptr + newindex)->~T();
+      }
+      delete[] reinterpret_cast<char*>(newptr);
+      throw;
+    }
+
+    for (size_t index = 0; index < sz_; ++index) {
+      (ptr_ + index)->~T();
+    }
+
+    delete[] reinterpret_cast<char*>(ptr_);
+
+    ptr_ = newptr;
+    cap_ = other.cap_;
+    sz_ = other.sz_;
+
+    return *this;
+  }
 
   size_t size() const {
     return sz_;
