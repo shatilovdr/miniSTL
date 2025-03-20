@@ -6,7 +6,29 @@ template<typename T>
 class vector {
  public:
   vector() : ptr_(nullptr), sz_(0), cap_(0) {}
-  vector(const vector& other);
+
+  vector(const vector& other)
+      : ptr_(nullptr), sz_(other.sz_), cap_(other.cap_) {
+
+    if (cap_ == 0)
+      return;
+
+    ptr_ = reinterpret_cast<T*>(new char[sizeof(T) * cap_]);
+
+    size_t index = 0;
+    try {
+      for (; index < sz_; ++index) {
+        new(ptr_ + index) T(other.ptr_[index]);
+      }
+    } catch (...) {
+      for (size_t newindex = 0; newindex < index; ++newindex) {
+        (ptr_ + newindex)->~T();
+      }
+      delete[] reinterpret_cast<char*>(ptr_);
+      throw;
+    }
+  };
+
   vector& operator=(const vector& other);
 
   size_t size() const {
@@ -20,7 +42,7 @@ class vector {
   void reserve(size_t newcap) {
     if (newcap <= cap_) {
       return;
-    }
+    } 
 
     T* newptr = reinterpret_cast<T*>(new char[sizeof(T) * newcap]);
 
