@@ -7,6 +7,28 @@ class vector {
  public:
   vector() : ptr_(nullptr), sz_(0), cap_(0) {}
 
+  explicit vector(size_t count, const T& value = T())
+      : ptr_(nullptr), sz_(count), cap_(count) {
+
+    if (cap_ == 0)
+      return;
+
+    ptr_ = reinterpret_cast<T*>(new char[sizeof(T) * cap_]);
+
+    size_t index = 0;
+    try {
+      for (; index < sz_; ++index) {
+        new(ptr_ + index) T(value);
+      }
+    } catch (...) {
+      for (size_t newindex = 0; newindex < index; ++newindex) {
+        (ptr_ + newindex)->~T();
+      }
+      delete[] reinterpret_cast<char*>(ptr_);
+      throw;
+    }
+  }
+
   vector(const vector& other)
       : ptr_(nullptr), sz_(other.sz_), cap_(other.cap_) {
 
