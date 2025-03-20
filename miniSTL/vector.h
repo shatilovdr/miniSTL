@@ -4,6 +4,8 @@ namespace ministl {
 
 template<typename T>
 class vector {
+  static_assert(!std::is_same<bool, T>::value, 
+      "vector<bool> is not supported yet");
  public:
   vector() : ptr_(nullptr), sz_(0), cap_(0) {}
 
