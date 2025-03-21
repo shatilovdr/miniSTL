@@ -164,6 +164,13 @@ class vector {
     --sz_;
   }
 
+  T&           operator[](size_t n) {
+    return *(ptr_ + n);
+  }
+  const T&     operator[](size_t n) const {
+    return *(ptr_ + n);
+  }
+
   ~vector() {
     for (size_t index = 0; index < sz_; ++index) {
       (ptr_ + index)->~T();
