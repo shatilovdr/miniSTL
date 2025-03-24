@@ -164,6 +164,14 @@ class vector {
     --sz_;
   }
 
+  T& back() {
+    return *(ptr_ + sz_ - 1);
+  }
+
+  const T& back() const {
+    return *(ptr_ + sz_ - 1);
+  }
+
   T&           operator[](size_t n) {
     return *(ptr_ + n);
   }
