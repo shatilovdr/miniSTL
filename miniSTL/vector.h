@@ -172,6 +172,14 @@ class vector {
     return *(ptr_ + sz_ - 1);
   }
 
+  T& front() {
+    return *ptr_;
+  }
+
+  const T& front() const {
+    return *ptr_;
+  }
+
   T&           operator[](size_t n) {
     return *(ptr_ + n);
   }
